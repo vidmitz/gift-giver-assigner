@@ -1,0 +1,494 @@
+<html>
+<head>
+<script>
+
+var siblingText = "sibling";
+var soText = "so";
+var recipientText = "recipient";
+
+function SetRecipients() {
+	myForm = document.forms['myform'];
+
+	yearSeed = new Date().getFullYear() + "Christmas";	
+	myForm.elements["year"].value = yearSeed;
+	Math.seedrandom(yearSeed);
+
+	var totalParticipants = TotalParticipants();
+	var soFarSoGood = false;
+
+	while (!soFarSoGood) {
+		//alert("try");
+		var numTries = myForm.elements["tries"].value;
+		myForm.elements["tries"].value = numTries;
+		numTries++;
+		myForm.elements["tries"].value = numTries;
+
+		soFarSoGood = true;
+		ClearRecipients();
+
+		for (var i = 1; i <= totalParticipants; i++) {
+
+			var thisGuy = GetParticipant(i);
+			var thisSo = GetParticipantSO(i);
+
+			var tries = 0;
+			var works = false;
+			var thisRecipient = "";
+
+			while (!works && tries < 5) {
+
+				var randomRecipientIndex = Math.floor((Math.random()*totalParticipants)+1); 
+				thisRecipient = GetParticipant(randomRecipientIndex);
+
+				if (thisRecipient != thisGuy && thisRecipient != thisSo && !IsRecipientTaken(thisRecipient)) {
+					works = true;
+				}
+
+				tries++;
+			}			
+
+			SetRecipient(i, thisRecipient);
+			if (!works) {
+				soFarSoGood = false;
+			}
+
+		}
+
+		
+	}
+
+/*
+	sibling1recipient = myForm.elements["sibling1recipient"];	
+	sibling1recipient.value = "notdave";
+
+	siblingso1recipient = myForm.elements["siblingso1recipient"];	
+	siblingso1recipient.value = "notyoko";
+*/
+}
+
+function TotalParticipants() {
+	var total = 0;
+	for (var j = 1; j <= 4; j++) {
+		var thisId = siblingText + j;
+		if (myForm.elements[thisId].value != "") {
+			total++;
+		}
+		thisId = siblingText + soText + j;
+		if (myForm.elements[thisId].value != "") {
+			total++;
+		}
+	}
+	return total;
+}
+
+function GetParticipant(index) {
+	var innerIndex = 1;
+	for (var i = 1; i <= 4; i++) {
+		var thisId = siblingText + i;
+		if (myForm.elements[thisId].value != "") {
+			if (innerIndex == index) {
+				return myForm.elements[thisId].value;
+			} else {
+				innerIndex++;
+			}
+		}
+		thisId = siblingText + soText + i;
+		if (myForm.elements[thisId].value != "") {
+			if (innerIndex == index) {
+				return myForm.elements[thisId].value;
+			} else {
+				innerIndex++;
+			}
+		}
+	}
+}
+
+function GetParticipantSO(index) {
+	var innerIndex = 1;
+	for (var i = 1; i <= 4; i++) {
+		var thisIdSib = siblingText + i;
+		var thisIdSo = siblingText + soText + i;
+		if (myForm.elements[thisIdSib].value != "") {
+			if (innerIndex == index) {
+				return myForm.elements[thisIdSo].value;
+			} else {
+				innerIndex++;
+			}
+		}
+		var thisIdSo = siblingText + soText + i;
+		if (myForm.elements[thisIdSo].value != "") {
+			if (innerIndex == index) {
+				return myForm.elements[thisIdSib].value;
+			} else {
+				innerIndex++;
+			}
+		}
+	}
+}
+
+function ClearRecipients() {
+	for (var i = 1; i <= 4; i++) {
+		var thisId = siblingText + i;
+		var thisRecipientId = thisId + recipientText;
+		myForm.elements[thisRecipientId].value = "";
+
+		thisId = siblingText + soText + i;
+		thisRecipientId = thisId + recipientText;
+		myForm.elements[thisRecipientId].value = "";
+	}
+}
+
+function IsRecipientTaken(candidate) {
+	for (var i = 1; i <= 4; i++) {
+		var thisId = siblingText + i;
+		var thisRecipientId = thisId + recipientText;
+		if (myForm.elements[thisRecipientId].value == candidate) {
+			return true;
+		}
+
+		thisId = siblingText + soText + i;
+		thisRecipientId = thisId + recipientText;
+		if (myForm.elements[thisRecipientId].value == candidate) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function SetRecipient(index, recipientValue) {
+	var innerIndex = 1;
+	for (var i = 1; i <= 4; i++) {
+		var thisId = siblingText + i;
+		if (myForm.elements[thisId].value != "") {
+			if (innerIndex == index) {
+				var thisRecipientId = thisId + recipientText;
+				myForm.elements[thisRecipientId].value = recipientValue;
+				return;
+			} else {
+				innerIndex++;
+			}
+		}
+		thisId = siblingText + soText + i;
+		if (myForm.elements[thisId].value != "") {
+			if (innerIndex == index) {
+				var thisRecipientId = thisId + recipientText;
+				myForm.elements[thisRecipientId].value = recipientValue;
+				return;
+			} else {
+				innerIndex++;
+			}
+		}
+	}
+}
+
+function GetRecipient(index) {
+	var innerIndex = 1;
+	for (var i = 1; i <= 4; i++) {
+		var thisId = siblingText + i;
+		if (myForm.elements[thisId].value != "") {
+			if (innerIndex == index) {
+				var thisRecipientId = thisId + recipientText;
+				return myForm.elements[thisRecipientId].value;
+			} else {
+				innerIndex++;
+			}
+		}
+		thisId = siblingText + soText + i;
+		if (myForm.elements[thisId].value != "") {
+			if (innerIndex == index) {
+				var thisRecipientId = thisId + recipientText;
+				return myForm.elements[thisRecipientId].value;
+			} else {
+				innerIndex++;
+			}
+		}
+	}
+}
+
+
+function NameSelectionChanged() {
+	var myForm = document.forms['myform'];
+	var you = myForm.elements["you"];
+	var recipient = myForm.elements["YourRecipient"];	
+	var soGiver = myForm.elements["SOGiver"];	
+	soGiver.value = "";
+	var yourName = you.options[you.selectedIndex].text;
+	if (you.selectedIndex == 0) {
+		alert("You forgot to select your name.  Ho! Ho! Ho!");
+		recipient.value = "???";
+		return;	
+	}
+	
+	var totalParticipants = TotalParticipants();
+	for (var i = 1; i <= totalParticipants; i++) {
+		var thisGuy = GetParticipant(i);
+		if (thisGuy == yourName) {
+			recipient.value = GetRecipient(i);			
+			return;
+		}
+	}
+	alert("Could not find who you are giving to.  Please contact Santa for assistance.");	
+	recipient.value = "???";	
+	
+}
+
+function SOGiverRequested() {
+	var myForm = document.forms['myform'];
+	var you = myForm.elements["you"];
+	var soGiver = myForm.elements["SOGiver"];	
+	var yourName = you.options[you.selectedIndex].text;
+	var yourSo = "";
+	if (you.selectedIndex == 0) {
+		alert("You forgot to select your name.  How do I know who your spouse is?");
+		soGiver.value = "???";
+		return;	
+	}
+
+	var totalParticipants = TotalParticipants();
+	for (var i = 1; i <= totalParticipants; i++) {
+		var thisGuy = GetParticipant(i);
+		if (thisGuy == yourName) {
+			yourSo = GetParticipantSO(i);
+			break;
+		}
+	}
+
+	if (yourSo != "") {
+		for (var i = 1; i <= totalParticipants; i++) {
+			var thisRecipient = GetRecipient(i);
+			if (thisRecipient == yourSo) {
+				soGiver.value = GetParticipant(i);
+				return;
+			}
+		}
+	}
+
+	soGiver.value = "Santa";
+	alert("Your spouse or significant other is not participating in the gift exchange.  Please contact Santa if you believe this to be an error.");
+}
+
+(function (pool, math, width, chunks, significance, overflow, startdenom) {
+
+
+//
+// seedrandom()
+// This is the seedrandom function described above.
+//
+math['seedrandom'] = function seedrandom(seed, use_entropy) {
+  var key = [];
+  var arc4;
+
+  // Flatten the seed string or build one from local entropy if needed.
+  seed = mixkey(flatten(
+    use_entropy ? [seed, pool] :
+    arguments.length ? seed :
+    [new Date().getTime(), pool, window], 3), key);
+
+  // Use the seed to initialize an ARC4 generator.
+  arc4 = new ARC4(key);
+
+  // Mix the randomness into accumulated entropy.
+  mixkey(arc4.S, pool);
+
+  // Override Math.random
+
+  // This function returns a random double in [0, 1) that contains
+  // randomness in every bit of the mantissa of the IEEE 754 value.
+
+  math['random'] = function random() {  // Closure to return a random double:
+    var n = arc4.g(chunks);             // Start with a numerator n < 2 ^ 48
+    var d = startdenom;                 //   and denominator d = 2 ^ 48.
+    var x = 0;                          //   and no 'extra last byte'.
+    while (n < significance) {          // Fill up all significant digits by
+      n = (n + x) * width;              //   shifting numerator and
+      d *= width;                       //   denominator and generating a
+      x = arc4.g(1);                    //   new least-significant-byte.
+    }
+    while (n >= overflow) {             // To avoid rounding up, before adding
+      n /= 2;                           //   last byte, shift everything
+      d /= 2;                           //   right using integer math until
+      x >>>= 1;                         //   we have exactly the desired bits.
+    }
+    return (n + x) / d;                 // Form the number within [0, 1).
+  };
+
+  // Return the seed that was used
+  return seed;
+};
+
+//
+// ARC4
+//
+// An ARC4 implementation.  The constructor takes a key in the form of
+// an array of at most (width) integers that should be 0 <= x < (width).
+//
+// The g(count) method returns a pseudorandom integer that concatenates
+// the next (count) outputs from ARC4.  Its return value is a number x
+// that is in the range 0 <= x < (width ^ count).
+//
+/** @constructor */
+function ARC4(key) {
+  var t, u, me = this, keylen = key.length;
+  var i = 0, j = me.i = me.j = me.m = 0;
+  me.S = [];
+  me.c = [];
+
+  // The empty key [] is treated as [0].
+  if (!keylen) { key = [keylen++]; }
+
+  // Set up S using the standard key scheduling algorithm.
+  while (i < width) { me.S[i] = i++; }
+  for (i = 0; i < width; i++) {
+    t = me.S[i];
+    j = lowbits(j + t + key[i % keylen]);
+    u = me.S[j];
+    me.S[i] = u;
+    me.S[j] = t;
+  }
+
+  // The "g" method returns the next (count) outputs as one number.
+  me.g = function getnext(count) {
+    var s = me.S;
+    var i = lowbits(me.i + 1); var t = s[i];
+    var j = lowbits(me.j + t); var u = s[j];
+    s[i] = u;
+    s[j] = t;
+    var r = s[lowbits(t + u)];
+    while (--count) {
+      i = lowbits(i + 1); t = s[i];
+      j = lowbits(j + t); u = s[j];
+      s[i] = u;
+      s[j] = t;
+      r = r * width + s[lowbits(t + u)];
+    }
+    me.i = i;
+    me.j = j;
+    return r;
+  };
+  // For robust unpredictability discard an initial batch of values.
+  // See http://www.rsa.com/rsalabs/node.asp?id=2009
+  me.g(width);
+}
+
+//
+// flatten()
+// Converts an object tree to nested arrays of strings.
+//
+/** @param {Object=} result 
+  * @param {string=} prop
+  * @param {string=} typ */
+function flatten(obj, depth, result, prop, typ) {
+  result = [];
+  typ = typeof(obj);
+  if (depth && typ == 'object') {
+    for (prop in obj) {
+      if (prop.indexOf('S') < 5) {    // Avoid FF3 bug (local/sessionStorage)
+        try { result.push(flatten(obj[prop], depth - 1)); } catch (e) {}
+      }
+    }
+  }
+  return (result.length ? result : obj + (typ != 'string' ? '\0' : ''));
+}
+
+//
+// mixkey()
+// Mixes a string seed into a key that is an array of integers, and
+// returns a shortened string seed that is equivalent to the result key.
+//
+/** @param {number=} smear 
+  * @param {number=} j */
+function mixkey(seed, key, smear, j) {
+  seed += '';                         // Ensure the seed is a string
+  smear = 0;
+  for (j = 0; j < seed.length; j++) {
+    key[lowbits(j)] =
+      lowbits((smear ^= key[lowbits(j)] * 19) + seed.charCodeAt(j));
+  }
+  seed = '';
+  for (j in key) { seed += String.fromCharCode(key[j]); }
+  return seed;
+}
+
+//
+// lowbits()
+// A quick "n mod width" for width a power of 2.
+//
+function lowbits(n) { return n & (width - 1); }
+
+//
+// The following constants are related to IEEE 754 limits.
+//
+startdenom = math.pow(width, chunks);
+significance = math.pow(2, significance);
+overflow = significance * 2;
+
+//
+// When seedrandom.js is loaded, we immediately mix a few bits
+// from the built-in RNG into the entropy pool.  Because we do
+// not want to intefere with determinstic PRNG state later,
+// seedrandom will not call math.random on its own again after
+// initialization.
+//
+mixkey(math.random(), pool);
+
+// End anonymous scope, and pass initial values.
+})(
+  [],   // pool: entropy pool starts empty
+  Math, // math: package containing random, pow, and seedrandom
+  256,  // width: each RC4 output is 0 <= x < 256
+  6,    // chunks: at least six RC4 outputs for each double
+  52    // significance: there are 52 significant digits in a double
+);
+</script>
+</head>
+<body onload="SetRecipients()" style="background-color: lightgreen;">
+<h1 style="color: red">The Amazing Automated Gift Giver Assigner (AAGGA)</h1>
+<h2 style="color: red">Now with the Incredible Spouse Gifter Revealer!!!!</h2>
+<form id="myform">
+<input type="hidden" name="sibling1" value="Dave">
+<input type="hidden" name="siblingso1" value="Yoko">
+<input type="hidden" name="sibling2" value="Anne">
+<input type="hidden" name="siblingso2" value="">
+<input type="hidden" name="sibling3" value="Tim">
+<input type="hidden" name="siblingso3" value="Karen">
+<input type="hidden" name="sibling4" value="Dan">
+<input type="hidden" name="siblingso4" value="Lindsey">
+
+<div style="display: none">
+<br />Dave gives to: <input type="text" name="sibling1recipient" value="">
+<br />Yoko gives to: <input type="text" name="siblingso1recipient" value="">
+<br />Anne gives to: <input type="text" name="sibling2recipient" value="">
+<br />Santa gives to: <input type="text" name="siblingso2recipient" value="">
+<br />Tim gives to: <input type="text" name="sibling3recipient" value="">
+<br />Karen gives to: <input type="text" name="siblingso3recipient" value="">
+<br />Dan gives to: <input type="text" name="sibling4recipient" value="">
+<br />Lindsey gives to: <input type="text" name="siblingso4recipient" value="">
+<br />Year Seed: <input name="year" value="">
+<br />Tries: <input name="tries" value="0">
+<br />
+</div>
+
+<br />
+Who are you?&nbsp;&nbsp;
+<select name="you" onchangeX="NameSelectionChanged()">
+	<option>-- Select your name --</option>
+	<option>Dave</option>
+	<option>Yoko</option>
+	<option>Anne</option>
+	<option>Tim</option>
+	<option>Karen</option>
+	<option>Dan</option>
+	<option>Lindsey</option>
+</select>
+<input type="button" value="Yes, it's really me" onclick="NameSelectionChanged()">
+<br />
+You are buying for: <input name="YourRecipient" type="text">
+
+<br />
+<br />
+<br />
+<input type="button" value="BTW, who is buying for my spouse / significant other?" onclick="SOGiverRequested()">
+<input type="text" name="SOGiver">
+</form>
+</body>
+</html>
